@@ -2,15 +2,19 @@
 
 const express = require('express');
 const app = express();
-const router = express.Router();
+const bodyParser = require('body-parser');
+const requireDir = require('require-dir');
 
-const route = router.get('/', (req, res, next) => {
-   res.status(200).send({
-      "Título": "API em NodeJS",
-      "Version": "1.0.0.0"
-   });
-});
+// ROTAS
+const indexRoute = require('./routes/Index'); 
+const productRoute = require('./routes/ProductRoute');
 
-app.use('/', route);
+app.use(express.json());
+app.use(bodyParser.urlencoded({
+   extended: false
+}));
+
+app.use('/', indexRoute);
+app.use('/products', productRoute);
 
 module.exports = app;
