@@ -1,48 +1,62 @@
 'use strict';
 
-const mongoose = require('mongoose');
-const Product = mongoose.model('Product');
+const Repository = require('../repositories/ProductRepository');
 
 module.exports = {
    async getAll(req, res, next) {
-      return res.json(await Product.find({
-         active: true
-      }, 'title price slug'));
+      try {
+         return res.json(await Repository.getAll());
+      } catch (error) {
+         return res.send(error.errors);
+      }
    },
 
    async getBySlug(req, res, next) {
-      return res.json(await Product.findOne({
-         active: true,
-         slug: req.params.slug
-      }, 'title description price slug'))
+      try {
+         return res.json(await Repository.getBySlug(req.params.slug));
+      } catch (error) {
+         return res.send(error.errors);
+      }
    },
 
    async getById(req, res, next) {
-      return res.json(await Product.findById(req.params.id));
+      try {
+         return res.json(await Repository.getById(req.params.id));
+      } catch (error) {
+         return res.send(error.errors);
+      }
    },
 
    async getByTag(req, res, next) {
-      return res.json(await Product.find({
-         tags: req.params.tag,
-         active: true
-      }, 'title description price slug tags'));
+      try {
+         return res.json(await Repository.getByTag(req.params.tag));
+      } catch (error) {
+         return res.send(error.errors);
+      }
    },
 
    async insert(req, res, next) {
       try {
-         return res.json(await Product.create(req.body));
+         return res.json(await Repository.insert(req.body));
       } catch (error) {
-         return res.send(error);
+         error.errors.isError = true;
+         return res.send(error.errors);
       }
    },
 
    async update(req, res, next) {
-      return res.json(await Product.findByIdAndUpdate(req.params.id, req.body, {
-         new: true
-      }));
+      try {
+         return res.json(await Repository.update(req.params.id, req.body));
+      } catch (error) {
+         return res.send(error.errors);
+      }
    },
 
    async remove(req, res, next) {
-      return res.json(await Product.findByIdAndRemove(req.body.id));
-   },
+      try {
+         return res.json(await Repository.remove(req.body.id));
+      } catch (error) {
+         return res.send(error);  
+      }
+   }
 };
